@@ -12,6 +12,28 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
 
+    private bool _mouseButton0;
+
+
+    private void Update()
+    {
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
+    }
+
+    private void OnGUI()
+    {
+        if (_runner == null)
+        {
+            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
+            {
+                StartGame(GameMode.Host);
+            }
+            if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
+            {
+                StartGame(GameMode.Client);
+            }
+        }
+    }
 
     public async void StartGame(GameMode mode)
     {
@@ -36,21 +58,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             // SceneManager handles instantiation of NetworkObjects that are placed directly in the scene
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
-    }
-
-    private void OnGUI()
-    {
-        if (_runner == null)
-        {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
-            {
-                StartGame(GameMode.Host);
-            }
-            if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
-            {
-                StartGame(GameMode.Client);
-            }
-        }
     }
 
     #region INetworkRunnerCallbacks
@@ -90,6 +97,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             data.Direction += Vector3.right;
         }
+
+        data.Buttons.Set(NetworkInputData.MOUSEBUTTON0, _mouseButton0);
+        _mouseButton0 = false;
 
         input.Set(data);
     }

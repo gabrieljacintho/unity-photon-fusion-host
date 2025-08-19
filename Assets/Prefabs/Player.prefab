@@ -200,6 +200,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterController: {fileID: 4569545158960791718}
+  _ballPrefab:
+    RawGuidValue: 63ddc60fd3ac4cf419ebeb49495d2372
 --- !u!1 &8677186600399795581
 GameObject:
   m_ObjectHideFlags: 0
