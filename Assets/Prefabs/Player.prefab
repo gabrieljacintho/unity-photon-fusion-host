@@ -202,6 +202,7 @@ MonoBehaviour:
   _characterController: {fileID: 4569545158960791718}
   _ballPrefab:
     RawGuidValue: 63ddc60fd3ac4cf419ebeb49495d2372
+  _physxBallPrefab: {fileID: 3967485672682366858, guid: 599b27ceb521e9945bf2cf4ac91da4fb, type: 3}
 --- !u!1 &8677186600399795581
 GameObject:
   m_ObjectHideFlags: 0

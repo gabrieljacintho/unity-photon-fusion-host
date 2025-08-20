@@ -5,6 +5,7 @@ public class Player : NetworkBehaviour
 {
     [SerializeField] private NetworkCharacterController _characterController;
     [SerializeField] private NetworkPrefabRef _ballPrefab;
+    [SerializeField] private PhysxBall _physxBallPrefab;
 
     [Networked] private TickTimer FireDelay { get; set; }
 
@@ -20,13 +21,24 @@ public class Player : NetworkBehaviour
             {
                 if (data.Buttons.IsSet(NetworkInputData.MOUSEBUTTON0))
                 {
+                    FireDelay = TickTimer.CreateFromSeconds(Runner, 0.5f);
+
                     Runner.Spawn(_ballPrefab, transform.position + transform.forward, Quaternion.LookRotation(transform.forward),
                         Object.InputAuthority, (runner, @object) =>
                         {
                             @object.GetComponent<Ball>().Init();
                         });
 
+                }
+                else if (data.Buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
+                {
                     FireDelay = TickTimer.CreateFromSeconds(Runner, 0.5f);
+
+                    Runner.Spawn(_physxBallPrefab, transform.position + transform.forward, Quaternion.LookRotation(transform.forward),
+                        Object.InputAuthority, (runner, @object) =>
+                        {
+                            @object.GetComponent<PhysxBall>().Init(transform.forward * 10f);
+                        });
                 }
             }
         }
