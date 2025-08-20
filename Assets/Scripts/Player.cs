@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using TMPro;
 using UnityEngine;
 
 public class Player : NetworkBehaviour
@@ -9,6 +10,7 @@ public class Player : NetworkBehaviour
     
     private ChangeDetector _changeDetector;
     private Material _material;
+    private TMP_Text _messages;
 
     [Networked] private TickTimer FireDelay { get; set; }
     [Networked] private bool SpawnedProjectile { get; set; }
@@ -17,6 +19,14 @@ public class Player : NetworkBehaviour
     private void Awake()
     {
         _material = GetComponentInChildren<Renderer>().material;
+    }
+
+    private void Update()
+    {
+        if (Object.HasInputAuthority && Input.GetKeyDown(KeyCode.Space))
+        {
+            RPC_SendMessage("Hello!");
+        }
     }
 
     public override void FixedUpdateNetwork()
@@ -85,5 +95,29 @@ public class Player : NetworkBehaviour
         }
 
         _material.color = Color.Lerp(_material.color, Color.blue, Time.deltaTime);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_SendMessage(string message, RpcInfo info = default)
+    {
+        RPC_RelayMessage(message, info.Source);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    public void RPC_RelayMessage(string message, PlayerRef messageSource)
+    {
+        if (_messages == null)
+            _messages = FindObjectOfType<TMP_Text>();
+
+        if (messageSource == Runner.LocalPlayer)
+        {
+            message = $"You said: {message}\n";
+        }
+        else
+        {
+            message = $"Some other player said: {message}\n";
+        }
+
+        _messages.text += message;
     }
 }
